@@ -1,10 +1,11 @@
 [
     {
-        "title": "Test Title",
-        "text": "Test text"
+        "title": "Test",
+        "text": "Test",
+        "id": "e1356850-0f0c-11eb-86a6-0b297e79cf71"
     },
     {
-        "title": "Me",
-        "tip_id": "ce72186c-c22b-4e7b-b22c-34f84ae0bc80"
+        "title": "Test2",
+        "id": "b9f3959a-5921-43d6-82b5-4013a50e728c"
     }
 ]

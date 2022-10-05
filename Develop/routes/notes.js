@@ -1,10 +1,20 @@
 const notes = require('express').Router();
-const { readFromFile, readAndAppend } = require('../helpers/fsUtils');
+const { readFromFile, writeToFile, readAndAppend } = require('../helpers/fsUtils');
 const { v4: uuidv4 } = require('uuid');
 
 // GET Route for retrieving all the notes
 notes.get('/', (req, res) => {
-  readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
+  readFromFile('./db/db.json')
+    .then((notes) => {
+      let parsedNotes = [];
+      try {
+        parsedNotes = [].concat(JSON.parse(notes))
+      } catch {
+        parsedNotes = []
+      } 
+      return parsedNotes
+    })
+    .then((data) => res.json(data)).catch((err) => console.log(err))
 });
 
 // POST Route for a new note
@@ -17,7 +27,7 @@ notes.post('/', (req, res) => {
     const newNote = {
       title,
       body,
-      tip_id: uuidv4(),
+      id: uuidv4(),
     };
 
     readAndAppend(newNote, './db/db.json');
@@ -25,6 +35,27 @@ notes.post('/', (req, res) => {
   } else {
     res.error('Error in adding note');
   }
+});
+
+notes.delete('/:id', async (req, res) => {
+  // delete a category by its `id` value
+  readFromFile('./db/db.json')
+    .then((notes) => {
+      let parsedNotes = [];
+      try {
+        parsedNotes = [].concat(JSON.parse(notes))
+      } catch {
+        parsedNotes = []
+      } 
+      return parsedNotes
+    })
+    .then((data) => {
+      const filteredNotes = data.filter(note => {
+      return note.id !== req.params.id
+      });
+      writeToFile('./db/db.json', filteredNotes);
+      res.end();
+    }).catch((err) => console.log(err))
 });
 
 module.exports = notes;
